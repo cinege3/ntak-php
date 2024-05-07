@@ -11,6 +11,6 @@ enum NTAKAmount: string
     case DARAB = 'darab';
     case LITER = 'liter';
     case KILOGRAMM = 'kilogramm';
-    case EGYSEG = 'egyseg';
+    case EGYSEG = 'egység';
     case ADAG = 'adag';
 }

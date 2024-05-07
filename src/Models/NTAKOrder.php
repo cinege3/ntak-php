@@ -8,6 +8,7 @@ use Kiralyta\Ntak\Enums\NTAKCategory;
 use Kiralyta\Ntak\Enums\NTAKOrderType;
 use Kiralyta\Ntak\Enums\NTAKPaymentType;
 use Kiralyta\Ntak\Enums\NTAKSubcategory;
+use Kiralyta\Ntak\Enums\NTAKSummaryReason;
 use Kiralyta\Ntak\Enums\NTAKVat;
 
 class NTAKOrder
@@ -33,16 +34,18 @@ class NTAKOrder
      * @return void
      */
     public function __construct(
-        public readonly NTAKOrderType    $orderType,
-        public readonly string           $orderId,
-        public readonly ?array           $orderItems = null,
-        public readonly ?string          $ntakOrderId = null,
-        public readonly ?Carbon          $start = null,
-        public          ?Carbon          $end = null,
-        public readonly bool             $isAtTheSpot = true,
-        public readonly ?array           $payments = null,
-        public readonly int              $discount = 0,
-        public readonly int              $serviceFee = 0
+        public readonly NTAKOrderType       $orderType,
+        public readonly string              $orderId,
+        public readonly ?array              $orderItems = null,
+        public readonly ?string             $ntakOrderId = null,
+        public readonly ?Carbon             $start = null,
+        public          ?Carbon             $end = null,
+        public readonly bool                $isAtTheSpot = true,
+        public readonly ?array              $payments = null,
+        public readonly int                 $discount = 0,
+        public readonly int                 $serviceFee = 0,
+        public readonly bool                $isSummarized = false,
+        public readonly ?NTAKSummaryReason  $summaryReason = null
     ) {
         if ($orderType === NTAKOrderType::NORMAL) {
             $this->validateIfNormal();
@@ -349,7 +352,7 @@ class NTAKOrder
         return array_reduce(
             $orderItems,
             function (int $carry, NTAKOrderItem $orderItem) {
-                return $carry + round($orderItem->price * $orderItem->quantity);
+                return $carry + (round($orderItem->price) * $orderItem->quantity);
             },
             0
         );
@@ -363,16 +366,7 @@ class NTAKOrder
      */
     protected function totalOfOrderItemsWithDiscount(array $orderItems): int
     {
-        return array_reduce(
-            $orderItems,
-            function (int $carry, NTAKOrderItem $orderItem) {
-                $price = ($orderItem->price * $orderItem->quantity) *
-                         (1 - $this->discount / 100);
-
-                return $carry + round($price);
-            },
-            0
-        );
+        return round($this->totalOfOrderItems($orderItems) * (1 - $this->discount / 100));
     }
 
     /**

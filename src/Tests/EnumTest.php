@@ -9,6 +9,7 @@ use Kiralyta\Ntak\Enums\NTAKDayType;
 use Kiralyta\Ntak\Enums\NTAKOrderType;
 use Kiralyta\Ntak\Enums\NTAKPaymentType;
 use Kiralyta\Ntak\Enums\NTAKSubcategory;
+use Kiralyta\Ntak\Enums\NTAKSummaryReason;
 use Kiralyta\Ntak\Enums\NTAKVat;
 use Kiralyta\Ntak\Enums\NTAKVerifyStatus;
 use Kiralyta\Ntak\TestCase;
@@ -106,7 +107,16 @@ class EnumTest extends TestCase
         $arrayOfEnum = $this -> jsonData->components->schemas->UzenetValasz->properties->statusz->enum;
 
         self::assertIsArray($arrayOfEnum);
-        self::assertEquals($arrayOfEnum, NTAKVerifyStatus::names());
+        self::assertEqualsCanonicalizing($arrayOfEnum, NTAKVerifyStatus::names());
+
+    }
+
+    public function test_ntak_summary_reason(): void
+    {
+        $arrayOfEnum = $this -> jsonData->components->schemas->RendelesOsszesitoAdat->properties->osszesitettIndoklasa->enum;
+
+        self::assertIsArray($arrayOfEnum);
+        self::assertEqualsCanonicalizing($arrayOfEnum, NTAKSummaryReason::names());
 
     }
 }

@@ -19,6 +19,7 @@ use Ramsey\Uuid\Uuid;
 
 class StoreOrderTest extends TestCase
 {
+    // todo: all tests cover test cases from ntak!
     protected NTAKClient|null $client;
 
     /**
